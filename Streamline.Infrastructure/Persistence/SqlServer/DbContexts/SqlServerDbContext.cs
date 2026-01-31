@@ -1,7 +1,7 @@
-using CoffeShop.Domain.Entities;
+using Streamline.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoffeShop.Infrastructure.Persistence.SqlServer.DbContexts
+namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
 {
     public class SqlServerDbContext : DbContext
     {

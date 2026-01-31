@@ -1,4 +1,4 @@
-namespace CoffeShop.Infrastructure.Configurations
+namespace Streamline.Infrastructure.Configurations
 {
     public class DbSettings
     {

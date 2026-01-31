@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace CoffeShop.Infrastructure.Persistence.SqlServer.DbContexts
+namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
 {
     public class SqlServerDbContextFactory : IDesignTimeDbContextFactory<SqlServerDbContext>
     {

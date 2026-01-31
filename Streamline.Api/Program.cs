@@ -1,5 +1,5 @@
 using DotNetEnv;
-using CoffeShop.Infrastructure.Persistence.SqlServer.DbContexts;
+using Streamline.Infrastructure.Persistence.SqlServer.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 Env.Load();

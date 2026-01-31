@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CoffeShop.Infrastructure.Migrations
+namespace Streamline.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

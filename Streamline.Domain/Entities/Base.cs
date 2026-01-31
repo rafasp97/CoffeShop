@@ -1,4 +1,4 @@
-namespace CoffeShop.Domain.Entities
+namespace Streamline.Domain.Entities
 {
     public abstract class Base
     {

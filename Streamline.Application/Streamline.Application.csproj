@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\CoffeShop.Domain\CoffeShop.Domain.csproj" />
+    <ProjectReference Include="..\Streamline.Domain\Streamline.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Streamline.Api/Streamline.Api.csproj" />
+  <Project Path="Streamline.Application/Streamline.Application.csproj" />
+  <Project Path="Streamline.Domain/Streamline.Domain.csproj" />
+  <Project Path="Streamline.Infrastructure/Streamline.Infrastructure.csproj" />
+</Solution>
