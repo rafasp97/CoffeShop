@@ -1,32 +1,31 @@
 using DotNetEnv;
 using Streamline.Infrastructure.Persistence.SqlServer.DbContexts;
+using Streamline.Application.Customers.CreateCustomer;
+using Streamline.Application.Repositories;
+using Streamline.Infrastructure.Persistence.SqlServer.Repositories;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using Streamline.API.Customers.Mapping;
+using Streamline.API.Customers.Dtos;
+using MediatR;
+using System.Reflection;
+using Streamline.API.Factory;
 
-Env.Load();
-
-var builder = WebApplication.CreateBuilder(args);
-
-var SQLSERVER_CONNECTION = Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION");
-
-builder.Services.AddDbContext<SqlServerDbContext>(options =>
-    options.UseSqlServer(SQLSERVER_CONNECTION));
-
-var app = builder.Build();
+var app = AppFactory.CreateApp(args);
 
 app.MapGet("/", () => "API rodando!");
 
-app.MapGet("/test-sql", async (SqlServerDbContext db) =>
-{
-    try
-    {
-        await db.Database.CanConnectAsync();
-        return Results.Ok("Conexão com SQL Server OK!");
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem($"Erro ao conectar: {ex.Message}");
-    }
-});
+var api = app.MapGroup("/api");
 
+
+// api/customer
+var customer = api.MapGroup("/customer");
+
+customer.MapPost("/", async (CreateCustomerDto dto, IMediator mediator, IMapper mapper) =>
+{
+    var command = mapper.Map<CreateCustomerCommand>(dto);
+    var result = await mediator.Send(command);
+    return Results.Ok(result);
+});
 
 app.Run();
