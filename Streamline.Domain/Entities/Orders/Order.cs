@@ -87,15 +87,30 @@ namespace Streamline.Domain.Entities.Orders
 
             if(IsDeleted)
                 throw new InvalidOperationException("Cannot pay a deleted order.");
+            
+            ValidateIfCanBePayAndConsumeProductStock();
 
-            foreach (var item in _orderProduct.Where(p => p.DeletedAt == null))
+            Status = EStatusOrder.Paid;
+        }
+
+        private void ValidateIfCanBePayAndConsumeProductStock() {
+
+            var listByOrderProduct = _orderProduct.Where(p => p.DeletedAt == null);
+
+            foreach (var item in listByOrderProduct)
+            {
+                if (item.Product.StockQuantity < item.Quantity)
+                {
+                    throw new InvalidOperationException(
+                        $"Not enough stock for product '{item.Product.Name}'. Requested: {item.Quantity}, Available: {item.Product.StockQuantity}"
+                    );
+                }
+            }
+
+            foreach (var item in listByOrderProduct)
             {
                 item.Product.ConsumeStock(item.Quantity);
             }
-
-            Status = EStatusOrder.Paid;
-
-            
         }
 
         public void Process()
