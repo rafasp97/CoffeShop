@@ -1,4 +1,4 @@
-namespace Streamline.Domain.Entities
+namespace Streamline.Domain.Entities.Customers
 {
     public abstract class Base
     {

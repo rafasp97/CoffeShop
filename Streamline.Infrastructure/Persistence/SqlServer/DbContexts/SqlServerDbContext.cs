@@ -1,4 +1,4 @@
-using Streamline.Domain.Entities;
+using Streamline.Domain.Entities.Customers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
@@ -9,7 +9,9 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
             : base(options)
         {}
 
-        public DbSet<Client> Clients => Set<Client>();
+        public DbSet<Customer> Customer { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
+        public DbSet<CustomerContact> CustomerContacts { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -35,6 +37,28 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
             }
 
             return base.SaveChangesAsync(cancellationToken);
+        }
+
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(a => a.Address)
+                .WithOne(c => c.Customer)
+                .HasForeignKey<CustomerAddress>(c => c.CustomerId);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.Contact)
+                .WithOne(ct => ct.Customer)
+                .HasForeignKey<CustomerContact>(ct => ct.CustomerId);
+            
+            modelBuilder.Entity<CustomerAddress>()
+                .HasKey(a => a.CustomerId);
+
+            modelBuilder.Entity<CustomerContact>()
+                .HasKey(c => c.CustomerId);
         }
     }
 }
