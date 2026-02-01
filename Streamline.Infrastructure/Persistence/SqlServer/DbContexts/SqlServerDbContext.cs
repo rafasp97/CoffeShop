@@ -1,6 +1,7 @@
 using Streamline.Domain.Entities;
 using Streamline.Domain.Entities.Customers;
 using Streamline.Domain.Entities.Products;
+using Streamline.Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
 
 namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
@@ -15,6 +16,7 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<CustomerContact> CustomerContacts { get; set; }
         public DbSet<Product> Product { get; set; }
+        public DbSet<Order> Order { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -63,10 +65,33 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
             modelBuilder.Entity<CustomerContact>()
                 .HasKey(c => c.CustomerId);
 
+            modelBuilder.Entity<Order>()
+                .HasOne(c => c.Customer)  
+                .WithMany()                 
+                .HasForeignKey(c => c.CustomerId)
+                .IsRequired()                 
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.OrderProduct)  
+                .WithOne(op => op.Order)         
+                .HasForeignKey(op => op.OrderId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade); 
+            
+            modelBuilder.Entity<OrderProduct>()
+                .HasOne(op => op.Product)
+                .WithMany()                    
+                .HasForeignKey(op => op.ProductId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict); 
+
             modelBuilder.Entity<Customer>().ToTable("customer");
             modelBuilder.Entity<CustomerAddress>().ToTable("customer_address");
             modelBuilder.Entity<CustomerContact>().ToTable("customer_contact");
             modelBuilder.Entity<Product>().ToTable("product");
+            modelBuilder.Entity<Order>().ToTable("order");
+            modelBuilder.Entity<OrderProduct>().ToTable("order_product");
         }
     }
 }

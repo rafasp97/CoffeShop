@@ -49,7 +49,9 @@ namespace Streamline.API.Factory
             var app = builder.Build();
 
             app.MapSwagger();
+
             app.UseSwagger();
+            
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("v1/swagger.json", "Streamline E-commerce");

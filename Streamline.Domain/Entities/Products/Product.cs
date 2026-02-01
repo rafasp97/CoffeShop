@@ -21,34 +21,27 @@ namespace Streamline.Domain.Entities.Products
             string? description = null)
         {
             Name = name;
-            SetPrice(price);
-            SetStockQuantity(stockQuantity);
+            Price = price;
+            StockQuantity = stockQuantity;
             Active = active;
             Description = description;
         }
 
-        private void SetPrice(decimal price)
-        {
-            if (price <= 0)
-                throw new InvalidOperationException("Price must be greater than zero.");
 
-            Price = price;
-        }
-
-        private void SetStockQuantity(int quantity)
+        public void ConsumeStock(int quantity)
         {
-            if (quantity < 0)
+            var updatedStock = StockQuantity - quantity;
+
+            if (updatedStock <= 0)
                 throw new InvalidOperationException("Stock quantity cannot be negative.");
 
-            StockQuantity = quantity;
-        }
+            if(updatedStock == 0) 
+                Deactivate();
 
-        public void UpdateStock(int quantity)
-        {
-            if (quantity < 0)
-                throw new InvalidOperationException("Stock quantity cannot be negative.");
-
-            StockQuantity = quantity;
+            else {
+                StockQuantity = updatedStock;
+                Activate();
+            };
         }
 
         public void Activate() => Active = true;
