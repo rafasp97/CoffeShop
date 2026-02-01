@@ -15,6 +15,25 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.Repositories
             _context = context;
         }
 
+        public void Add(Customer customer)
+        {
+            _context.Customer.Add(customer);
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
+
+        
+        public async Task<Customer?> GetById(int id)
+        {
+            return await _context.Customer
+                .Include(c => c.Contact)
+                .Include(c => c.Address)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
         public async Task<bool> PhoneExists(string phone)
         {
             return await _context.CustomerContacts.AnyAsync(c => c.Phone == phone);
@@ -30,14 +49,5 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.Repositories
             return await _context.Customer.AnyAsync(c => c.Document == document);
         }
 
-        public void Add(Customer customer)
-        {
-            _context.Customer.Add(customer);
-        }
-
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _context.SaveChangesAsync();
-        }
     }
 }
