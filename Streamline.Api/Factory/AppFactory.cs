@@ -3,6 +3,7 @@ using Streamline.Infrastructure.Persistence.SqlServer.DbContexts;
 using Streamline.Application.Repositories;
 using Streamline.Infrastructure.Persistence.SqlServer.Repositories;
 using Streamline.Application.Customers.CreateCustomer;
+using Streamline.Application.Products.CreateProduct;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using AutoMapper;
@@ -25,10 +26,12 @@ namespace Streamline.API.Factory
                 options.UseSqlServer(sqlConnection));
 
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(CreateCustomerCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(CreateProductCommandHandler).Assembly);
             });
 
             builder.Services.AddAutoMapper(typeof(AppFactory));

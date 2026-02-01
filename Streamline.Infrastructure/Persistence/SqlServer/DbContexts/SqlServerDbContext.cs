@@ -1,4 +1,6 @@
+using Streamline.Domain.Entities;
 using Streamline.Domain.Entities.Customers;
+using Streamline.Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
@@ -12,6 +14,7 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<CustomerContact> CustomerContacts { get; set; }
+        public DbSet<Product> Product { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -59,6 +62,11 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.DbContexts
 
             modelBuilder.Entity<CustomerContact>()
                 .HasKey(c => c.CustomerId);
+
+            modelBuilder.Entity<Customer>().ToTable("customer");
+            modelBuilder.Entity<CustomerAddress>().ToTable("customer_address");
+            modelBuilder.Entity<CustomerContact>().ToTable("customer_contact");
+            modelBuilder.Entity<Product>().ToTable("product");
         }
     }
 }
