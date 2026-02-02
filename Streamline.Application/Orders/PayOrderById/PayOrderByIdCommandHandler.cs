@@ -8,19 +8,30 @@ namespace Streamline.Application.Orders.PayOrderById
         : IRequestHandler<PayOrderByIdCommand, OrderResult>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ILogRepository _logger;
 
-        public PayOrderByIdCommandHandler(IOrderRepository orderRepository)
+        public PayOrderByIdCommandHandler(IOrderRepository orderRepository, ILogRepository logRepository)
         {
             _orderRepository = orderRepository;
+            _logger = logRepository;
         }
 
         public async Task<OrderResult> Handle(PayOrderByIdCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetById(request.Id)
-                ?? throw new InvalidOperationException("Order not found.");
-            
+            await _logger.Low($"Payment process started for OrderId = {request.Id}.");
+
+            var order = await _orderRepository.GetById(request.Id);
+
+            if(order == null)
+            {
+                await _logger.Medium($"Payment failed: OrderId = {request.Id} not found.");
+                throw new InvalidOperationException("Order not found.");
+            }
+
             order.Pay();
             await _orderRepository.Update(order);
+
+            await _logger.Low($"Payment process completed for OrderId = {request.Id}.");
 
             return new OrderResult
             {

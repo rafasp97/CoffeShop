@@ -17,6 +17,15 @@ namespace Streamline.Application.Orders.ListOrder
 
         public async Task<ListOrderResult> Handle(ListOrderQuery request, CancellationToken cancellationToken)
         {
+
+            await _logger.Low(
+                "Order listing initiated with filters: " +
+                $"Status = {request.Status}, " +
+                $"CustomerId = {request.CustomerId}, " +
+                $"CreatedFrom = {request.CreatedFrom}, " +
+                $"CreatedTo = {request.CreatedTo}."
+            );
+            
             var orders = await _orderRepository.GetAll(
                 request.Status,
                 request.CustomerId,
@@ -24,7 +33,7 @@ namespace Streamline.Application.Orders.ListOrder
                 request.CreatedTo
             );
 
-            await _logger.Low("Acessando a listagem de pedidos.");
+            await _logger.Low("Order listing query completed successfully.");
             
             return new ListOrderResult
             {

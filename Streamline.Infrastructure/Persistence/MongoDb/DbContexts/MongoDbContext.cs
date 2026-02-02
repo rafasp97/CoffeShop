@@ -8,7 +8,7 @@ namespace Streamline.Infrastructure.Persistence.MongoDb.DbContexts
     {
         private readonly IMongoDatabase _database;
 
-        public IMongoCollection<Log> Logs => _database.GetCollection<Log>("logs");
+        public IMongoCollection<Log> Logs => _database.GetCollection<Log>("audit_logs");
 
         public MongoDbContext(string connectionString, string databaseName)
         {
@@ -22,7 +22,7 @@ namespace Streamline.Infrastructure.Persistence.MongoDb.DbContexts
         {
             var existingCollections = _database.ListCollectionNames().ToList();
 
-            if (!existingCollections.Contains("logs"))
+            if (!existingCollections.Contains("audit_logs"))
             {
     
                 var timeSeriesOptions = new TimeSeriesOptions(
@@ -36,7 +36,7 @@ namespace Streamline.Infrastructure.Persistence.MongoDb.DbContexts
                     TimeSeriesOptions = timeSeriesOptions
                 };
 
-                _database.CreateCollection("logs", createOptions);
+                _database.CreateCollection("audit_logs", createOptions);
             }
         }
     }

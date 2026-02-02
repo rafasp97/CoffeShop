@@ -15,40 +15,64 @@ namespace Streamline.Application.Orders.UpdateOrderById
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
+        private readonly ILogRepository _logger;
 
         public UpdateOrderByIdCommandHandler(
             IOrderRepository orderRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            ILogRepository logRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _logger = logRepository;
         }
 
         public async Task<UpdateOrderByIdResult> Handle(
             UpdateOrderByIdCommand request,
             CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetById(request.OrderId)
-                ?? throw new InvalidOperationException("Order not found.");
+            await _logger.Low($"Update order process started for OrderId = {request.OrderId}.");
+
+            var order = await _orderRepository.GetById(request.OrderId);
+
+            if (order == null)
+            {
+                await _logger.Medium($"Update failed: Order with Id = {request.OrderId} not found.");
+                throw new InvalidOperationException("Order not found.");
+            }
 
             order.CheckIfCanUpdateProducts();
+            await _logger.Low("Order is eligible for product updates.");
 
             foreach (var item in request.Products)
             {
-                var product = await _productRepository.GetById(item.ProductId)
-                    ?? throw new InvalidOperationException($"Product {item.ProductId} not found.");
+                var product = await _productRepository.GetById(item.ProductId);
 
-                product.EnsureSufficientStock(item.Quantity);
+                if (product == null)
+                {
+                    await _logger.Medium($"Update failed: Product with Id = {item.ProductId} not found.");
+                    throw new InvalidOperationException($"Product {item.ProductId} not found.");
+                }
+
+                if (!product.EnsureSufficientStock(item.Quantity))
+                {
+                    await _logger.Medium($"Update failed: Insufficient stock for product '{product.Name}' (ProductId = {product.Id}).");
+                    throw new InvalidOperationException($"Not enough stock for product '{product.Name}'.");
+                }
 
                 var orderProduct = order.OrderProduct
                     .FirstOrDefault(op => op.Product.Id == item.ProductId);
                 
                 handleUpdateOrderProducts(item, order, product);
+                await _logger.Low($"Product updated in order: {product.Name}, New Quantity = {item.Quantity}, UnitPrice = {product.Price}.");
             }
 
             RemoveProductsNotInRequest(order, request);
+            await _logger.Low("Removed products from order that were not included in the update request.");
+
 
             await _orderRepository.Update(order);
+            await _logger.Low($"Order updated successfully. OrderId = {order.Id}");
 
             return new UpdateOrderByIdResult
             {

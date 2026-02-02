@@ -8,16 +8,28 @@ namespace Streamline.Application.Orders.GetOrderById
         : IRequestHandler<GetOrderByIdQuery, OrderResult>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ILogRepository _logger;
 
-        public GetOrderByIdQueryHandler(IOrderRepository orderRepository)
+        public GetOrderByIdQueryHandler(IOrderRepository orderRepository, ILogRepository logRepository)
         {
             _orderRepository = orderRepository;
+            _logger = logRepository;
         }
 
         public async Task<OrderResult> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetById(request.Id)
-                ?? throw new InvalidOperationException("Order not found.");
+
+            await _logger.Low($"Retrieving order details for OrderId = {request.Id}.");
+
+            var order = await _orderRepository.GetById(request.Id);
+
+            if (order == null)
+            {
+                await _logger.Medium($"Order retrieval failed: Order with Id = {request.Id} not found.");
+                throw new InvalidOperationException("Order not found.");
+            };
+
+            await _logger.Low($"Order retrieval completed successfully. OrderId = {request.Id}.");
 
             return new OrderResult
             {

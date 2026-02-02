@@ -13,21 +13,32 @@ namespace Streamline.Application.Orders.DeleteOrderById
         : IRequestHandler<DeleteOrderByIdCommand, Unit>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ILogRepository _logger;
 
-        public DeleteOrderByIdCommandHandler(IOrderRepository orderRepository)
+        public DeleteOrderByIdCommandHandler(IOrderRepository orderRepository, ILogRepository logRepository)
         {
             _orderRepository = orderRepository;
+            _logger = logRepository;
         }
 
         public async Task<Unit> Handle(
             DeleteOrderByIdCommand request,
             CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetById(request.Id)
-                ?? throw new InvalidOperationException("Order not found.");
+            await _logger.High($"Deletion process started for OrderId = {request.Id}.");
+
+            var order = await _orderRepository.GetById(request.Id);
+
+            if(order == null)
+            {
+                await _logger.Medium($"Deletion failed: OrderId = {request.Id} not found.");
+                throw new InvalidOperationException("Order not found.");
+            }
 
             order.Delete();
             await _orderRepository.Update(order);
+
+            await _logger.High($"Deletion process completed for OrderId = {request.Id}.");
 
             return Unit.Value;
         }

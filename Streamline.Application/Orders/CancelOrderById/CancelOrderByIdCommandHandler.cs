@@ -8,19 +8,30 @@ namespace Streamline.Application.Orders.CancelOrderById
         : IRequestHandler<CancelOrderByIdCommand, OrderResult>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ILogRepository _logger;
 
-        public CancelOrderByIdCommandHandler(IOrderRepository orderRepository)
+        public CancelOrderByIdCommandHandler(IOrderRepository orderRepository, ILogRepository logRepository)
         {
             _orderRepository = orderRepository;
+            _logger = logRepository;
         }
 
         public async Task<OrderResult> Handle(CancelOrderByIdCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetById(request.Id)
-                ?? throw new InvalidOperationException("Order not found.");
+            await _logger.High($"Cancellation process started for OrderId = {request.Id}.");
+
+            var order = await _orderRepository.GetById(request.Id);
+
+            if(order == null)
+            {
+                await _logger.Medium($"Cancellation failed: OrderId = {request.Id} not found.");
+                throw new InvalidOperationException("Order not found.");
+            }
             
             order.Cancel();
             await _orderRepository.Update(order);
+
+            await _logger.High($"Cancellation process completed for OrderId = {request.Id}.");
 
             return new OrderResult
             {
