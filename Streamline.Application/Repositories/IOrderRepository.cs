@@ -7,9 +7,9 @@ namespace Streamline.Application.Repositories
     public interface IOrderRepository
     {
         void Add(Order order);
-        Task<int> SaveChangesAsync();
-
+        Task<int> SaveChanges();
         Task<List<Order>> GetAll(EStatusOrder? status, int? customerId, DateTime? createdFrom, DateTime? createdTo);
         Task<Order?> GetById(int Id);
+        Task Update(Order order);
     }
 }

@@ -21,7 +21,7 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.Repositories
             _context.Order.Add(order);
         }
 
-        public async Task<int> SaveChangesAsync()
+        public async Task<int> SaveChanges()
         {
             return await _context.SaveChangesAsync();
         }
@@ -64,6 +64,12 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.Repositories
                 .ThenInclude(op => op.Product)
                 .Where(o => o.DeletedAt == null)
                 .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        public async Task Update(Order order)
+        {
+            _context.Order.Update(order);
+            await _context.SaveChangesAsync();
         }
 
     }

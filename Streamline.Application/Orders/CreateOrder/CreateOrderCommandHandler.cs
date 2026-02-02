@@ -49,7 +49,7 @@ namespace Streamline.Application.Orders.CreateOrder
             }
 
             _orderRepository.Add(order);
-            await _orderRepository.SaveChangesAsync();
+            await _orderRepository.SaveChanges();
 
             return new OrderResult
             {

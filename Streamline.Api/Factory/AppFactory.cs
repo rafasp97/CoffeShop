@@ -31,8 +31,7 @@ namespace Streamline.API.Factory
 
             builder.Services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(typeof(CreateCustomerCommandHandler).Assembly);
-                cfg.RegisterServicesFromAssembly(typeof(CreateProductCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
 
             builder.Services.AddAutoMapper(typeof(AppFactory));

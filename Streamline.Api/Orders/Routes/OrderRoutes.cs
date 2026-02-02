@@ -4,6 +4,7 @@ using Streamline.API.Orders.Dtos;
 using Streamline.Application.Orders.CreateOrder;
 using Streamline.Application.Orders.ListOrder;
 using Streamline.Application.Orders.GetOrderById;
+using Streamline.Application.Orders.DeleteOrderById;
 using Streamline.Domain.Enums;
 
 namespace Streamline.API.Orders.Routes
@@ -55,22 +56,20 @@ namespace Streamline.API.Orders.Routes
 
             group.MapGet("/{id}", async (int id, IMediator mediator) =>
             {
-                var query = new GetOrderByIdQuery
-                {
-                    Id = id
-                };
-
-                var result = await mediator.Send(query);
-
-                if (result == null)
-                    return Results.NotFound($"Order with Id {id} not found.");
-
+                var result = await mediator.Send(new GetOrderByIdQuery { Id = id });
                 return Results.Ok(result);
             })
             .WithMetadata(new Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute(
                 summary: "Get order by ID",
                 description: "Retrieves a single order along with its customer and product details based on the specified order ID."
             ));
+
+            group.MapDelete("/{id}", async (int id, IMediator mediator) =>
+            {
+                await mediator.Send(new DeleteOrderByIdCommand { Id = id });
+                return Results.NoContent();
+            });
+
         }
     }
 }
