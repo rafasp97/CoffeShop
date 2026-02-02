@@ -1,7 +1,9 @@
 using DotNetEnv;
-using Streamline.Infrastructure.Persistence.SqlServer.DbContexts;
 using Streamline.Application.Repositories;
+using Streamline.Infrastructure.Persistence.SqlServer.DbContexts;
 using Streamline.Infrastructure.Persistence.SqlServer.Repositories;
+using Streamline.Infrastructure.Persistence.MongoDb.DbContexts;
+using Streamline.Infrastructure.Persistence.MongoDb.Repositories;
 using Streamline.Application.Customers.CreateCustomer;
 using Streamline.Application.Products.CreateProduct;
 using Microsoft.EntityFrameworkCore;
@@ -21,17 +23,30 @@ namespace Streamline.API.Factory
             var builder = WebApplication.CreateBuilder(args);
 
             var sqlConnection = Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION");
+            var mongoConnection = Environment.GetEnvironmentVariable("MONGO_CONNECTION");
+            var mongoDatabase = Environment.GetEnvironmentVariable("MONGO_DATABASE");
+
+            if (
+                string.IsNullOrEmpty(mongoConnection) || 
+                string.IsNullOrEmpty(mongoDatabase) ||
+                string.IsNullOrEmpty(sqlConnection))
+            {
+                throw new InvalidOperationException("Variáveis de ambiente não definidas.");
+            }
 
             builder.Services.AddDbContext<SqlServerDbContext>(options =>
                 options.UseSqlServer(sqlConnection));
 
+            builder.Services.AddSingleton(new MongoDbContext(mongoConnection, mongoDatabase));
+
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<ILogRepository, LogRepository>();
 
-            builder.Services.AddMediatR(cfg =>
+            builder.Services.AddMediatR(config =>
             {
-                cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+                config.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
 
             builder.Services.AddAutoMapper(typeof(AppFactory));
