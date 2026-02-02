@@ -60,10 +60,10 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.Repositories
             return await _context.Order
                 .Include(o => o.Customer)
                 .ThenInclude(c => c.Contact)
-                .Include(o => o.OrderProduct)
+                .Include(o => o.OrderProduct
+                .Where(op => op.DeletedAt == null))
                 .ThenInclude(op => op.Product)
-                .Where(o => o.DeletedAt == null)
-                .FirstOrDefaultAsync(o => o.Id == id);
+                .FirstOrDefaultAsync(o => o.DeletedAt == null && o.Id == id);
         }
 
         public async Task Update(Order order)

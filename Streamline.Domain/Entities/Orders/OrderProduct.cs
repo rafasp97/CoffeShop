@@ -37,16 +37,15 @@ namespace Streamline.Domain.Entities.Orders
             if (quantity < 0)
                 throw new InvalidOperationException("Quantity must be greater than zero.");
             
-            if(quantity == 0)
-                Delete();
-        
             Quantity = quantity;
-            CalculateSubtotal();
+
+            if (Quantity == 0)
+                MarkAsDeleted();
+            else
+                Restore();
+
+            Subtotal  = CalculateSubtotal();
         }
 
-        public void Delete()
-        {
-            MarkAsDeleted();
-        }
     }
 }

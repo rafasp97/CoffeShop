@@ -5,6 +5,7 @@ using Streamline.Application.Orders.CreateOrder;
 using Streamline.Application.Orders.ListOrder;
 using Streamline.Application.Orders.GetOrderById;
 using Streamline.Application.Orders.DeleteOrderById;
+using Streamline.Application.Orders.UpdateOrderById;
 using Streamline.Domain.Enums;
 
 namespace Streamline.API.Orders.Routes
@@ -68,7 +69,27 @@ namespace Streamline.API.Orders.Routes
             {
                 await mediator.Send(new DeleteOrderByIdCommand { Id = id });
                 return Results.NoContent();
-            });
+            })
+            .WithMetadata(new Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute(
+                summary: "Delete order by ID",
+                description: "Deletes a specific order based on the provided order ID. Once deleted, the order cannot be recovered."
+            ));
+
+            group.MapPut("update-order/{id}", async (
+                int id,
+                UpdateOrderDto dto,
+                IMediator mediator,
+                IMapper mapper) =>
+            {
+                var command = mapper.Map<UpdateOrderByIdCommand>(dto);
+                command.OrderId = id;
+                var result = await mediator.Send(command);
+                return Results.Ok(result);
+            })
+            .WithMetadata(new Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute(
+                summary: "Update an existing order",
+                description: "Updates the details of an existing order, including products and quantities based on the provided order ID."
+            ));
 
         }
     }

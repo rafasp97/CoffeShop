@@ -35,14 +35,14 @@ namespace Streamline.Domain.Entities.Orders
                 throw new InvalidOperationException(
                     "Only pending orders can be add products.");
 
-            if (quantity <= 0)
+            if (quantity < 0)
                 throw new InvalidOperationException("Quantity must be greater than zero.");
 
             var productInOrder = GetProductInOrder(product.Id);
 
             if (productInOrder != null)
             {
-                productInOrder.UpdateQuantity(productInOrder.Quantity + quantity);
+                productInOrder.UpdateQuantity(quantity);
                 RecalculateTotal();
                 return;
             }
@@ -51,6 +51,7 @@ namespace Streamline.Domain.Entities.Orders
                 new OrderProduct(this, product, quantity)
             );
             RecalculateTotal();
+
         }
     
         public void RemoveProduct(Product product, int quantity)
@@ -59,7 +60,7 @@ namespace Streamline.Domain.Entities.Orders
                 throw new InvalidOperationException(
                     "Only pending orders can be add products.");
 
-            if (quantity <= 0)
+            if (quantity < 0)
                 throw new InvalidOperationException("Quantity must be greater than zero.");
 
             var productInOrder = GetProductInOrder(product.Id);
@@ -67,9 +68,11 @@ namespace Streamline.Domain.Entities.Orders
             if(productInOrder == null)
                 throw new InvalidOperationException("Product not found.");
 
-            productInOrder.UpdateQuantity(productInOrder.Quantity - quantity);
+            productInOrder.UpdateQuantity(quantity);
             RecalculateTotal();
-            return;
+
+            if (_orderProduct.All(p => p.DeletedAt != null) || Total == 0)
+                MarkAsDeleted(); 
         }
 
         private OrderProduct? GetProductInOrder(int productId)
@@ -155,6 +158,12 @@ namespace Streamline.Domain.Entities.Orders
                 throw new InvalidOperationException("Only pending orders can be deleted.");
 
             MarkAsDeleted();
+        }
+
+        public void CheckIfCanUpdateProducts()
+        {
+            if(Status != EStatusOrder.Pending) 
+                throw new InvalidOperationException("Only pending orders can be update products.");
         }
 
     }

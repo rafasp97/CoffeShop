@@ -24,7 +24,6 @@ namespace Streamline.Infrastructure.Persistence.SqlServer.Repositories
         {
             return await _context.SaveChangesAsync();
         }
-
         
         public async Task<Customer?> GetById(int id)
         {

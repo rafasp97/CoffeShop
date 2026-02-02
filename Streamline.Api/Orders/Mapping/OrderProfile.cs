@@ -1,6 +1,7 @@
 using AutoMapper;
 using Streamline.API.Orders.Dtos;
 using Streamline.Application.Orders.CreateOrder;
+using Streamline.Application.Orders.UpdateOrderById;
 
 namespace Streamline.API.Orders.Mapping
 {
@@ -9,8 +10,9 @@ namespace Streamline.API.Orders.Mapping
         public OrderProfile()
         {
             CreateMap<CreateOrderDto, CreateOrderCommand>();
-            
             CreateMap<CreateOrderProductDto, CreateOrderProductCommand>();
+            CreateMap<UpdateOrderDto, UpdateOrderByIdCommand>();
+            CreateMap<CreateOrderProductDto, UpdateOrderProductCommand>(); 
         }
     }
 }

@@ -47,6 +47,12 @@ namespace Streamline.Domain.Entities.Products
             };
         }
 
+        public void EnsureSufficientStock(int quantity)
+        {
+            if (StockQuantity < quantity)
+                throw new InvalidOperationException($"Not enough stock for product '{Name}'.");
+        }
+
         public void Activate() => Active = true;
 
         public void Deactivate() {

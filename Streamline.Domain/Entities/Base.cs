@@ -13,6 +13,12 @@ namespace Streamline.Domain.Entities
         {
             DeletedAt = DateTime.UtcNow;
         }
+
+        protected void Restore()
+        {
+            DeletedAt = null;
+        }
+
     }
     
 }

@@ -40,10 +40,7 @@ namespace Streamline.Application.Orders.CreateOrder
                 var product = await _productRepository.GetById(item.ProductId)
                     ?? throw new InvalidOperationException($"Product {item.ProductId} not found.");
 
-                if (product.StockQuantity < item.Quantity)
-                    throw new InvalidOperationException(
-                        $"Not enough stock for product '{product.Name}'."
-                    );
+                product.EnsureSufficientStock(item.Quantity);
 
                 order.AddProduct(product, item.Quantity);
             }
@@ -64,7 +61,9 @@ namespace Streamline.Application.Orders.CreateOrder
                 Products = order.OrderProduct.Select(orderProduct => new ProductResult
                 {
                     Name = orderProduct.Product.Name,
-                    UnitPrice = orderProduct.UnitPrice
+                    UnitPrice = orderProduct.UnitPrice,
+                    Quantity = orderProduct.Quantity,
+                    Subtotal = orderProduct.Subtotal
                 }).ToList(),
                 Total = order.Total,
                 CreatedAt = order.CreatedAt
