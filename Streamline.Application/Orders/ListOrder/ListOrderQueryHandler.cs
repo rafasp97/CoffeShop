@@ -7,10 +7,12 @@ namespace Streamline.Application.Orders.ListOrder
         : IRequestHandler<ListOrderQuery, ListOrderResult>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ILogRepository _logger;
 
-        public ListOrderQueryHandler(IOrderRepository orderRepository)
+        public ListOrderQueryHandler(IOrderRepository orderRepository, ILogRepository logRepository)
         {
             _orderRepository = orderRepository;
+            _logger = logRepository;
         }
 
         public async Task<ListOrderResult> Handle(ListOrderQuery request, CancellationToken cancellationToken)
@@ -21,6 +23,8 @@ namespace Streamline.Application.Orders.ListOrder
                 request.CreatedFrom,
                 request.CreatedTo
             );
+
+            await _logger.Low("Acessando a listagem de pedidos.");
             
             return new ListOrderResult
             {
