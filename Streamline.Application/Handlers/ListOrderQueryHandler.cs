@@ -1,7 +1,9 @@
 using MediatR;
 using Streamline.Application.Interfaces.Repositories;
+using Streamline.Application.Results;
+using Streamline.Application.Queries;
 
-namespace Streamline.Application.Orders.ListOrder
+namespace Streamline.Application.Handlers
 {
     public class ListOrderQueryHandler
         : IRequestHandler<ListOrderQuery, ListOrderResult>

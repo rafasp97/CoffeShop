@@ -1,6 +1,6 @@
 using AutoMapper;
 using Streamline.API.Dtos;
-using Streamline.Application.Products.CreateProduct;
+using Streamline.Application.Commands;
 
 namespace Streamline.API.Mappings
 {

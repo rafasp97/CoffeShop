@@ -1,6 +1,7 @@
 using MediatR;
+using Streamline.Application.Results;
 
-namespace Streamline.Application.Customers.CreateCustomer
+namespace Streamline.Application.Commands
 {
     public class CreateCustomerCommand : IRequest<CreateCustomerResult>
     {

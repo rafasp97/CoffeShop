@@ -2,12 +2,12 @@ using MediatR;
 using Streamline.Application.Interfaces.Repositories;
 using Streamline.Domain.Entities.Orders;
 using Streamline.Domain.Entities.Products;
-using Streamline.Application.Orders;
+using Streamline.Application.Commands;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Streamline.Application.Orders.DeleteOrderById
+namespace Streamline.Application.Handlers
 {
     public class DeleteOrderByIdCommandHandler 
         : IRequestHandler<DeleteOrderByIdCommand, Unit>

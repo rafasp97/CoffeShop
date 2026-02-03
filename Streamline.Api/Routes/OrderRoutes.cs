@@ -1,13 +1,8 @@
 using MediatR;
 using AutoMapper;
 using Streamline.API.Dtos;
-using Streamline.Application.Orders.CreateOrder;
-using Streamline.Application.Orders.ListOrder;
-using Streamline.Application.Orders.GetOrderById;
-using Streamline.Application.Orders.DeleteOrderById;
-using Streamline.Application.Orders.UpdateOrderById;
-using Streamline.Application.Orders.PayOrderById;
-using Streamline.Application.Orders.CancelOrderById;
+using Streamline.Application.Commands;
+using Streamline.Application.Queries;
 using Streamline.Domain.Enums;
 
 namespace Streamline.API.Routes

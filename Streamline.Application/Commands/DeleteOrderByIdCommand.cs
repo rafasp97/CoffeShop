@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Streamline.Application.Orders.DeleteOrderById
+namespace Streamline.Application.Commands
 {
     public class DeleteOrderByIdCommand : IRequest<Unit>
     {

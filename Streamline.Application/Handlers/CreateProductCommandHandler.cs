@@ -3,8 +3,10 @@ using Streamline.Domain.Entities.Products;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using Streamline.Application.Commands;
+using Streamline.Application.Results;
 
-namespace Streamline.Application.Products.CreateProduct
+namespace Streamline.Application.Handlers
 {
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, CreateProductResult>
     {

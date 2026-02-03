@@ -1,35 +1,42 @@
 using MediatR;
 using Streamline.Application.Interfaces.Repositories;
-using Streamline.Application.Orders;
+using Streamline.Application.Interfaces.Queues;
+using Streamline.Application.Commands;
+using Streamline.Application.Results;
 
-namespace Streamline.Application.Orders.GetOrderById
+namespace Streamline.Application.Handlers
 {
-    public class GetOrderByIdQueryHandler
-        : IRequestHandler<GetOrderByIdQuery, OrderResult>
+    public class PayOrderByIdCommandHandler
+        : IRequestHandler<PayOrderByIdCommand, OrderResult>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IOrderProcessingQueue _orderProcessingQueue;
         private readonly ILogRepository _logger;
 
-        public GetOrderByIdQueryHandler(IOrderRepository orderRepository, ILogRepository logRepository)
+        public PayOrderByIdCommandHandler(IOrderRepository orderRepository, ILogRepository logRepository, IOrderProcessingQueue orderProcessingQueue)
         {
             _orderRepository = orderRepository;
+            _orderProcessingQueue = orderProcessingQueue;
             _logger = logRepository;
         }
 
-        public async Task<OrderResult> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+        public async Task<OrderResult> Handle(PayOrderByIdCommand request, CancellationToken cancellationToken)
         {
-
-            await _logger.Low($"Retrieving order details for OrderId = {request.Id}.");
+            await _logger.Low($"Payment process started for OrderId = {request.Id}.");
 
             var order = await _orderRepository.GetById(request.Id);
 
-            if (order == null)
+            if(order == null)
             {
-                await _logger.Medium($"Order retrieval failed: Order with Id = {request.Id} not found.");
+                await _logger.Medium($"Payment failed: OrderId = {request.Id} not found.");
                 throw new InvalidOperationException("Order not found.");
-            };
+            }
 
-            await _logger.Low($"Order retrieval completed successfully. OrderId = {request.Id}.");
+            order.StartProcessing();
+
+            await _orderRepository.Update(order);
+
+            _orderProcessingQueue.Enqueue(order.Id); 
 
             return new OrderResult
             {

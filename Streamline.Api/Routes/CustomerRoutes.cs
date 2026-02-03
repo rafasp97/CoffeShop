@@ -2,7 +2,7 @@
 using MediatR;
 using AutoMapper;
 using Streamline.API.Dtos;
-using Streamline.Application.Customers.CreateCustomer;
+using Streamline.Application.Commands;
 
 namespace Streamline.API.Routes
 {

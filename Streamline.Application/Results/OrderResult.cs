@@ -1,4 +1,4 @@
-namespace Streamline.Application.Orders
+namespace Streamline.Application.Results
 {
     public class OrderResult
     {

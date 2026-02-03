@@ -1,6 +1,4 @@
-using Streamline.Application.Orders;
-
-namespace Streamline.Application.Orders.ListOrder
+namespace Streamline.Application.Results
 {
     public class ListOrderResult
     {

@@ -3,8 +3,10 @@ using Streamline.Domain.Entities.Customers;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using Streamline.Application.Commands;
+using Streamline.Application.Results;
 
-namespace Streamline.Application.Customers.CreateCustomer
+namespace Streamline.Application.Handlers
 {
     public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, CreateCustomerResult>
     {

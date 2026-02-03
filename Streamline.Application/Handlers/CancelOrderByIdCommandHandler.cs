@@ -1,41 +1,38 @@
 using MediatR;
 using Streamline.Application.Interfaces.Repositories;
-using Streamline.Application.Interfaces.Queues;
-using Streamline.Application.Orders;
+using Streamline.Application.Results;
+using Streamline.Application.Commands;
 
-namespace Streamline.Application.Orders.PayOrderById
+namespace Streamline.Application.Handlers
 {
-    public class PayOrderByIdCommandHandler
-        : IRequestHandler<PayOrderByIdCommand, OrderResult>
+    public class CancelOrderByIdCommandHandler
+        : IRequestHandler<CancelOrderByIdCommand, OrderResult>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IOrderProcessingQueue _orderProcessingQueue;
         private readonly ILogRepository _logger;
 
-        public PayOrderByIdCommandHandler(IOrderRepository orderRepository, ILogRepository logRepository, IOrderProcessingQueue orderProcessingQueue)
+        public CancelOrderByIdCommandHandler(IOrderRepository orderRepository, ILogRepository logRepository)
         {
             _orderRepository = orderRepository;
-            _orderProcessingQueue = orderProcessingQueue;
             _logger = logRepository;
         }
 
-        public async Task<OrderResult> Handle(PayOrderByIdCommand request, CancellationToken cancellationToken)
+        public async Task<OrderResult> Handle(CancelOrderByIdCommand request, CancellationToken cancellationToken)
         {
-            await _logger.Low($"Payment process started for OrderId = {request.Id}.");
+            await _logger.High($"Cancellation process started for OrderId = {request.Id}.");
 
             var order = await _orderRepository.GetById(request.Id);
 
             if(order == null)
             {
-                await _logger.Medium($"Payment failed: OrderId = {request.Id} not found.");
+                await _logger.Medium($"Cancellation failed: OrderId = {request.Id} not found.");
                 throw new InvalidOperationException("Order not found.");
             }
-
-            order.StartProcessing();
-
+            
+            order.Cancel();
             await _orderRepository.Update(order);
 
-            _orderProcessingQueue.Enqueue(order.Id); 
+            await _logger.High($"Cancellation process completed for OrderId = {request.Id}.");
 
             return new OrderResult
             {

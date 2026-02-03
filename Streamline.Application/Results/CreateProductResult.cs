@@ -1,4 +1,4 @@
-namespace Streamline.Application.Products.CreateProduct
+namespace Streamline.Application.Results
 {
     public class CreateProductResult
     {

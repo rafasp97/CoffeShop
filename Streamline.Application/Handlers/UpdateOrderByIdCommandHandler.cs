@@ -3,12 +3,13 @@ using Streamline.Application.Interfaces.Repositories;
 using Streamline.Domain.Entities.Orders;
 using Streamline.Domain.Entities.Products;
 using Streamline.Domain.Enums;
-using Streamline.Application.Orders;
+using Streamline.Application.Commands;
+using Streamline.Application.Results;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Streamline.Application.Orders.UpdateOrderById
+namespace Streamline.Application.Handlers
 {
     public class UpdateOrderByIdCommandHandler 
         : IRequestHandler<UpdateOrderByIdCommand, UpdateOrderByIdResult>

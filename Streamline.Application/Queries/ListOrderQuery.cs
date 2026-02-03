@@ -1,7 +1,8 @@
 using MediatR;
 using Streamline.Domain.Enums;
+using Streamline.Application.Results;
 
-namespace Streamline.Application.Orders.ListOrder
+namespace Streamline.Application.Queries
 {
     public class ListOrderQuery : IRequest<ListOrderResult>
     {

@@ -1,7 +1,8 @@
 using MediatR;
 using Streamline.Domain.Enums;
+using Streamline.Application.Results;
 
-namespace Streamline.Application.Orders.UpdateOrderById
+namespace Streamline.Application.Commands
 {
     public class UpdateOrderByIdCommand : IRequest<UpdateOrderByIdResult>
     {

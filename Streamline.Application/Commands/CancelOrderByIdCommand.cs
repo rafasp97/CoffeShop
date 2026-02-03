@@ -1,8 +1,8 @@
 using MediatR;
 using Streamline.Domain.Enums;
-using Streamline.Application.Orders;
+using Streamline.Application.Results;
 
-namespace Streamline.Application.Orders.CancelOrderById
+namespace Streamline.Application.Commands
 {
     public class CancelOrderByIdCommand : IRequest<OrderResult>
     {
