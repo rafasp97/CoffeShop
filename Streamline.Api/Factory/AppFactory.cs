@@ -15,6 +15,7 @@ using Streamline.Infrastructure.Persistence.MongoDb.Repositories;
 using Streamline.Infrastructure.Messaging.RabbitMq;
 using Streamline.Infrastructure.Queues;
 using Streamline.Infrastructure.BackgroundWorkers.Workers;
+using RabbitMQ.Client;
 
 namespace Streamline.API.Factory
 {
@@ -46,7 +47,19 @@ namespace Streamline.API.Factory
             builder.Services.AddSingleton(new MongoDbContext(mongoConnection, mongoDatabase));
             builder.Services.AddSingleton(new RabbitMqSettings(rabbitConnection));
             builder.Services.AddSingleton<RabbitMqPublisher>();
+            builder.Services.AddSingleton<RabbitMqConsumer>();
             builder.Services.AddSingleton<IOrderProcessingQueue, OrderProcessingQueue>();
+            builder.Services.AddSingleton<IServiceScopeFactory>(sp => sp.GetRequiredService<IServiceScopeFactory>());
+
+            builder.Services.AddSingleton<IConnection>(sp =>
+            {
+                var settings = sp.GetRequiredService<RabbitMqSettings>();
+                var factory = new RabbitMQ.Client.ConnectionFactory() 
+                { 
+                    Uri = new Uri(settings.ConnectionString) 
+                };
+                return factory.CreateConnection();
+            });
 
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -62,6 +75,7 @@ namespace Streamline.API.Factory
             });
 
             builder.Services.AddHostedService(provider => (OrderProcessingQueue)provider.GetRequiredService<IOrderProcessingQueue>());
+            builder.Services.AddHostedService<RabbitMqConsumerQueue>();
 
             builder.Services.AddAutoMapper(typeof(AppFactory));
 

@@ -26,11 +26,6 @@ namespace Streamline.Infrastructure.Messaging.RabbitMq
             return PublishToQueue("shipped-orders", message);
         }
 
-        public Task CompletedOrder<T>(T message)
-        {
-            return PublishToQueue("completed-orders", message);
-        }
-
         private Task PublishToQueue<T>(string queueName, T message)
         {
             _channel.QueueDeclare(queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
