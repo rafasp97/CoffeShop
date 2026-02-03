@@ -1,16 +1,20 @@
 using DotNetEnv;
-using Streamline.Application.Repositories;
-using Streamline.Infrastructure.Persistence.SqlServer.DbContexts;
-using Streamline.Infrastructure.Persistence.SqlServer.Repositories;
-using Streamline.Infrastructure.Persistence.MongoDb.DbContexts;
-using Streamline.Infrastructure.Persistence.MongoDb.Repositories;
-using Streamline.Application.Customers.CreateCustomer;
-using Streamline.Application.Products.CreateProduct;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using AutoMapper;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.OpenApi;
+using Streamline.Application.Repositories;
+using Streamline.Application.Interfaces.Queues;
+using Streamline.Application.Customers.CreateCustomer;
+using Streamline.Application.Products.CreateProduct;
+using Streamline.Infrastructure.Persistence.SqlServer.DbContexts;
+using Streamline.Infrastructure.Persistence.SqlServer.Repositories;
+using Streamline.Infrastructure.Persistence.MongoDb.DbContexts;
+using Streamline.Infrastructure.Persistence.MongoDb.Repositories;
+using Streamline.Infrastructure.Messaging.RabbitMq;
+using Streamline.Infrastructure.Queues;
+using Streamline.Infrastructure.BackgroundWorkers.Workers;
 
 namespace Streamline.API.Factory
 {
@@ -25,11 +29,13 @@ namespace Streamline.API.Factory
             var sqlConnection = Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION");
             var mongoConnection = Environment.GetEnvironmentVariable("MONGO_CONNECTION");
             var mongoDatabase = Environment.GetEnvironmentVariable("MONGO_DATABASE");
+            var rabbitConnection = Environment.GetEnvironmentVariable("RABBITMQ_CONNECTION");
 
             if (
                 string.IsNullOrEmpty(mongoConnection) || 
                 string.IsNullOrEmpty(mongoDatabase) ||
-                string.IsNullOrEmpty(sqlConnection))
+                string.IsNullOrEmpty(sqlConnection) ||
+                string.IsNullOrEmpty(rabbitConnection))
             {
                 throw new InvalidOperationException("Variáveis de ambiente não definidas.");
             }
@@ -38,22 +44,32 @@ namespace Streamline.API.Factory
                 options.UseSqlServer(sqlConnection));
 
             builder.Services.AddSingleton(new MongoDbContext(mongoConnection, mongoDatabase));
+            builder.Services.AddSingleton(new RabbitMqSettings(rabbitConnection));
+            builder.Services.AddSingleton<RabbitMqPublisher>();
+            builder.Services.AddSingleton<IOrderProcessingQueue, OrderProcessingQueue>();
 
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<ILogRepository, LogRepository>();
+            builder.Services.AddScoped<OrderRepository>();
+            builder.Services.AddScoped<LogRepository>();
+            builder.Services.AddScoped<OrderProcessingWorker>();
 
             builder.Services.AddMediatR(config =>
             {
                 config.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
 
+            builder.Services.AddHostedService(provider => (OrderProcessingQueue)provider.GetRequiredService<IOrderProcessingQueue>());
+
             builder.Services.AddAutoMapper(typeof(AppFactory));
 
             builder.Services.AddMvc();
 
             builder.Services.AddEndpointsApiExplorer();
+
+            builder.Services.AddHostedService<OrderProcessingQueue>();
 
             builder.Services.AddSwaggerGen(options =>
             {

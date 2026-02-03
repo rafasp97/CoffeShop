@@ -122,7 +122,7 @@ namespace Streamline.Domain.Entities.Orders
             
             ConsumeProductStock();
 
-            Status = EStatusOrder.Processing;
+            Status = EStatusOrder.Paid;
         }
 
         private void ConsumeProductStock() {

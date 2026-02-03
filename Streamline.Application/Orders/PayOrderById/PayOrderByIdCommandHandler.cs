@@ -1,5 +1,6 @@
 using MediatR;
 using Streamline.Application.Repositories;
+using Streamline.Application.Interfaces.Queues;
 using Streamline.Application.Orders;
 
 namespace Streamline.Application.Orders.PayOrderById
@@ -8,11 +9,13 @@ namespace Streamline.Application.Orders.PayOrderById
         : IRequestHandler<PayOrderByIdCommand, OrderResult>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IOrderProcessingQueue _orderProcessingQueue;
         private readonly ILogRepository _logger;
 
-        public PayOrderByIdCommandHandler(IOrderRepository orderRepository, ILogRepository logRepository)
+        public PayOrderByIdCommandHandler(IOrderRepository orderRepository, ILogRepository logRepository, IOrderProcessingQueue orderProcessingQueue)
         {
             _orderRepository = orderRepository;
+            _orderProcessingQueue = orderProcessingQueue;
             _logger = logRepository;
         }
 
@@ -32,9 +35,7 @@ namespace Streamline.Application.Orders.PayOrderById
 
             await _orderRepository.Update(order);
 
-            //CHAMAR O JOB PARA PROCESSAR O PEDIDO...
-
-            await _logger.Low($"Payment process completed for OrderId = {request.Id}.");
+            _orderProcessingQueue.Enqueue(order.Id); 
 
             return new OrderResult
             {

@@ -16,17 +16,17 @@ namespace Streamline.Infrastructure.Messaging.RabbitMq
             _channel = _connection.CreateModel();
         }
 
-        public Task PublishProcessingOrder<T>(T message)
+        public Task ProcessedOrder<T>(T message)
         {
             return PublishToQueue("processed-orders", message);
         }
 
-        public Task PublishShippedOrder<T>(T message)
+        public Task ShippedOrder<T>(T message)
         {
             return PublishToQueue("shipped-orders", message);
         }
 
-        public Task PublishCompletedOrder<T>(T message)
+        public Task CompletedOrder<T>(T message)
         {
             return PublishToQueue("completed-orders", message);
         }
