@@ -1,8 +1,8 @@
 using AutoMapper;
-using Streamline.API.Products.Dtos;
+using Streamline.API.Dtos;
 using Streamline.Application.Products.CreateProduct;
 
-namespace Streamline.API.Products.Mapping
+namespace Streamline.API.Mappings
 {
     public class ProductProfile : Profile
     {

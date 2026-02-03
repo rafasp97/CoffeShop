@@ -1,9 +1,9 @@
 using AutoMapper;
-using Streamline.API.Orders.Dtos;
+using Streamline.API.Dtos;
 using Streamline.Application.Orders.CreateOrder;
 using Streamline.Application.Orders.UpdateOrderById;
 
-namespace Streamline.API.Orders.Mapping
+namespace Streamline.API.Mappings
 {
     public class OrderProfile : Profile
     {

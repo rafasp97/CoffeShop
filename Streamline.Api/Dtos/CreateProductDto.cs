@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Streamline.API.Products.Dtos
+namespace Streamline.API.Dtos
 {
     public class CreateProductDto
     {

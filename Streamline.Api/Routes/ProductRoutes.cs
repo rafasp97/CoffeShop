@@ -1,9 +1,9 @@
 using MediatR;
 using AutoMapper;
-using Streamline.API.Products.Dtos;
+using Streamline.API.Dtos;
 using Streamline.Application.Products.CreateProduct;
 
-namespace Streamline.API.Products.Routes
+namespace Streamline.API.Routes
 {
     public static class ProductRoutes
     {

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 
-namespace Streamline.API.Orders.Dtos
+namespace Streamline.API.Dtos
 {
     public class CreateOrderDto
     {

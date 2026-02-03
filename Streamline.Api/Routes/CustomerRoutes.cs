@@ -1,10 +1,10 @@
 
 using MediatR;
 using AutoMapper;
-using Streamline.API.Customers.Dtos;
+using Streamline.API.Dtos;
 using Streamline.Application.Customers.CreateCustomer;
 
-namespace Streamline.API.Customers.Routes
+namespace Streamline.API.Routes
 {
     public static class CustomerRoutes
     {

@@ -1,8 +1,8 @@
 using AutoMapper;
-using Streamline.API.Customers.Dtos;
+using Streamline.API.Dtos;
 using Streamline.Application.Customers.CreateCustomer;
 
-namespace Streamline.API.Customers.Mapping
+namespace Streamline.API.Mappings
 {
     public class CustomerProfile : Profile
     {
