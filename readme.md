@@ -126,7 +126,6 @@ RABBITMQ_URI=                # amqp://admin:admin@localhost:5672/
 
 ```bash
 git clone https://github.com/rafasp97/Streamline.git
-cd Streamline.Api
 ```
 
 2. **Acesse a Camada de API**
@@ -141,7 +140,7 @@ cd Streamline.Api
 docker compose up -d
 ```
 
-4. **Execute para compilar e injetar as migrations**
+4. **Aplique as migrations**
 
 ```bash
 dotnet ef database update --project ../Streamline.Infrastructure --startup-project .
