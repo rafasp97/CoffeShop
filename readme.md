@@ -1,4 +1,4 @@
-# README: Streamline API
+# Streamline API
 
 A Streamline API é uma aplicação desenvolvida para simular o fluxo completo de processamento de pedidos em um e-commerce moderno. Seu principal objetivo é fornecer uma plataforma robusta para gerenciar usuários, produtos e pedidos, integrando regras de negócio consistentes, mensageria assíncrona e processamento de dados confiável.
 
