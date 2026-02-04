@@ -87,6 +87,13 @@ namespace Streamline.API.Factory
                 options.EnableAnnotations();
             });
 
+
+             // Porta 80 HTTP
+            builder.WebHost.ConfigureKestrel(options => 
+            { 
+                options.ListenAnyIP(80); 
+            });
+
             var app = builder.Build();
 
             // Configura Jobs do Hangfire
